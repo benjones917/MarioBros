@@ -9,12 +9,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.benjones.mariobros.MarioBros;
 import com.benjones.mariobros.screens.PlayScreen;
 import com.benjones.mariobros.sprites.Brick;
 import com.benjones.mariobros.sprites.Coin;
+import com.benjones.mariobros.sprites.Goomba;
 
 public class B2WorldCreator {
+	
+	private Array<Goomba> goombas;
 
 	public B2WorldCreator(PlayScreen screen) {
 		World world = screen.getWorld();
@@ -64,5 +68,15 @@ public class B2WorldCreator {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 			new Coin(screen, rect);
 		}
+		
+		goombas = new Array<Goomba>();
+		for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+			goombas.add(new Goomba(screen, rect.getX()/MarioBros.PPM, rect.getY()/MarioBros.PPM));
+		}
+	}
+	
+	public Array<Goomba> getGoombas() {
+		return goombas;
 	}
 }

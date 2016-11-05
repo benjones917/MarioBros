@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.benjones.mariobros.MarioBros;
 import com.benjones.mariobros.scenes.Hud;
+import com.benjones.mariobros.sprites.Enemy;
 import com.benjones.mariobros.sprites.Goomba;
 import com.benjones.mariobros.sprites.Mario;
 import com.benjones.mariobros.tools.B2WorldCreator;
@@ -30,7 +31,6 @@ public class PlayScreen implements Screen {
 	private Viewport gamePort;
 	private Hud hud;
 	private Mario player;
-	private Goomba goomba;
 
 	private TmxMapLoader mapLoader;
 	private TiledMap map;
@@ -38,6 +38,7 @@ public class PlayScreen implements Screen {
 
 	private World world;
 	private Box2DDebugRenderer b2dr;
+	private B2WorldCreator creator;
 	
 	private Music music;
 
@@ -57,7 +58,7 @@ public class PlayScreen implements Screen {
 
 		world = new World(new Vector2(0, -10), true);
 		
-		new B2WorldCreator(this);
+		creator = new B2WorldCreator(this);
 		
 		player = new Mario(this);
 		b2dr = new Box2DDebugRenderer();
@@ -67,7 +68,8 @@ public class PlayScreen implements Screen {
 		music = MarioBros.manager.get("audio/music/mario_music.ogg", Music.class);
 		music.setLooping(true);
 		//music.play();
-		goomba = new Goomba(this, .32f, .32f);
+		
+		
 	}
 	
 	public TextureAtlas getAtlas() {
@@ -88,7 +90,8 @@ public class PlayScreen implements Screen {
 		game.batch.setProjectionMatrix(gameCam.combined);
 		game.batch.begin();
 		player.draw(game.batch);
-		goomba.draw(game.batch);
+		for(Enemy enemy : creator.getGoombas())
+			enemy.draw(game.batch);
 		game.batch.end();
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -116,7 +119,12 @@ public class PlayScreen implements Screen {
 		handleInput(dt);
 		world.step(1/60f, 6, 2);
 		player.update(dt);
-		goomba.update(dt);
+		for(Enemy enemy : creator.getGoombas()) {
+			enemy.update(dt);
+			if(enemy.getX() < player.getX() + (224 / MarioBros.PPM)) {
+				enemy.b2body.setActive(true);
+			}
+		}
 		hud.update(dt);
 		gameCam.position.x = player.b2body.getPosition().x;
 		gameCam.update();
