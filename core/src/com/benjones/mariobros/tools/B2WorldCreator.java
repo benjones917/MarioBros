@@ -12,9 +12,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.benjones.mariobros.MarioBros;
 import com.benjones.mariobros.screens.PlayScreen;
-import com.benjones.mariobros.sprites.Brick;
-import com.benjones.mariobros.sprites.Coin;
-import com.benjones.mariobros.sprites.Goomba;
+import com.benjones.mariobros.sprites.enemies.Goomba;
+import com.benjones.mariobros.sprites.tileobjects.Brick;
+import com.benjones.mariobros.sprites.tileobjects.Coin;
 
 public class B2WorldCreator {
 	
@@ -59,14 +59,12 @@ public class B2WorldCreator {
 
 		// bricks
 		for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
-			new Brick(screen, rect);
+			new Brick(screen, object);
 		}
 
 		// coins
 		for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
-			new Coin(screen, rect);
+			new Coin(screen, object);
 		}
 		
 		goombas = new Array<Goomba>();
